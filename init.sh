@@ -206,7 +206,6 @@ lvm_online () {
     wait_for_lvm "$1"
     lvm vgchange -ay || rescue_shell "vgchange failed."
     lvm vgscan --mknodes || rescue_shell "vgscan failed."
-    shecho_green "LVM online"
 }
 
 # ========================================= #
@@ -263,7 +262,7 @@ mount -t sysfs none /sys || rescue_shell "Failed to mount sysfs"
 
 echo 1 > /proc/sys/kernel/printk
 
-shecho_green "$(splash)"
+get_ic "shecho_green \"$(splash)\""
 
 if [ "$(cmdline "irfs.crypt_uuid")" != "" ]; then
     wait_for_kcmd_device "irfs.crypt_uuid"
@@ -299,7 +298,8 @@ if [ "$(cmdline "irfs.crypt_uuid")" != "" ]; then
     fi
 fi
 
-lvm_online "irfs.root_pv_uuid"
+get_ic "lvm_online \"irfs.root_pv_uuid\""
+get_ic "shecho_green \"LVM online\""
 
 if [ "$(cmdline "irfs.btrfs_subvol_id")" = "" ]; then
     mount_dev "/dev/mapper/vg0-root"
@@ -313,7 +313,7 @@ fi
 
 umount /proc /sys /dev || rescue_shell "Failed to unmount temporary filesystems"
 
-shecho_green "$(footer)"
+get_ic "shecho_green \"$(footer)\""
 
 exec switch_root /mnt/root /sbin/init || rescue_shell "Failed to switch to real root filesystem"
 
